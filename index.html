@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Butterbell Café</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Butterbell Café: a tiny two-storey café on Lantern Lane. Coffee, small-batch bakes and a 3D menu you can turn in your hand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a toy-shop counter. A 3D diorama of the café beside the welcome note, then a turntable menu with the order card beside it. */
+:root {
+  --paper: #fbf4ec;
+  --paper-2: #f4e5d7;
+  --card: #fffaf5;
+  --ink: #3a2925;
+  --ink-soft: #7d665d;
+  --berry: #d4475d;
+  --berry-deep: #a9344a;
+  --leaf: #5f8a5b;
+  --butter: #f2cf7e;
+  --line: #ecdacb;
+  --on-berry: #fffaf5;
+
+  --f-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --f-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --f-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --step--1: 0.82rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(2rem, 4.5vw, 3rem);
+  --step-4: clamp(2.6rem, 7vw, 4.6rem);
+
+  --radius: 20px;
+  --shadow: 0 1px 0 rgba(58, 41, 37, .04), 0 18px 40px -24px rgba(122, 62, 52, .35);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--paper);
+}
+
+.wrap { max-width: 1240px; margin-inline: auto; }
+
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; line-height: 1.1; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--berry); outline-offset: 3px; border-radius: 8px; }
+
+.eyebrow {
+  font-size: var(--step--1);
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.hand { font-family: var(--f-hand); font-weight: 500; color: var(--berry-deep); }
+
+/* ---------- header ---------- */
+.top {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.top .wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-block: 12px;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; flex-shrink: 0; }
+.brand svg { width: 34px; height: 34px; }
+.brand-name { font-family: var(--f-display); font-style: italic; font-size: 1.45rem; line-height: 1; color: var(--berry-deep); }
+.brand-sub { display: block; font-size: .62rem; font-weight: 800; letter-spacing: .26em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
+
+.nav { display: flex; gap: 4px; overflow-x: auto; margin-inline: auto; scrollbar-width: none; min-width: 0; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a {
+  font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-soft); text-decoration: none; padding: 8px 12px; border-radius: 999px; white-space: nowrap;
+}
+.nav a:hover { color: var(--ink); background: var(--paper-2); }
+
+.pills { display: flex; gap: 8px; flex-shrink: 0; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--line); background: var(--card);
+  border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: .85rem;
+  font-variant-numeric: tabular-nums; cursor: pointer;
+}
+.pill svg { width: 16px; height: 16px; }
+.pill .heart { color: var(--berry); }
+.pill:hover { border-color: var(--berry); }
+.pill.bump { animation: bump .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes bump { 40% { transform: scale(1.18); } }
+
+@media (max-width: 760px) {
+  .top .wrap { flex-wrap: wrap; gap: 8px 12px; }
+  .nav { order: 3; width: 100%; margin-inline: -6px 0; }
+  .pills { margin-left: auto; }
+}
+
+/* ---------- hero ---------- */
+.hero .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  padding-block: clamp(28px, 5vw, 64px);
+}
+.hero-copy { display: grid; gap: 20px; min-width: 0; }
+.hero-title { font-size: var(--step-4); font-style: italic; color: var(--berry-deep); font-weight: 400; letter-spacing: -.01em; }
+.hero-title b { font-weight: 600; font-style: normal; color: var(--ink); display: block; font-size: .5em; letter-spacing: 0; margin-top: .25em; }
+.hero-lede { font-size: var(--step-1); color: var(--ink-soft); max-width: 34ch; line-height: 1.5; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 999px; padding: 12px 22px; font-weight: 800; font-size: .82rem;
+  letter-spacing: .12em; text-transform: uppercase; text-decoration: none; cursor: pointer;
+  border: 1.5px solid var(--ink); background: transparent; color: var(--ink);
+  transition: transform .15s ease, background .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-berry { background: var(--berry); border-color: var(--berry); color: var(--on-berry); box-shadow: 0 10px 22px -12px var(--berry-deep); }
+.btn-berry:hover { background: var(--berry-deep); border-color: var(--berry-deep); }
+
+.facts { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 4px 0 0; list-style: none; }
+.facts li {
+  font-size: .85rem; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+  background: var(--paper-2); color: var(--ink); font-variant-numeric: tabular-nums;
+}
+
+.diorama {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  max-width: 100%;
+  border-radius: 32px;
+  background: radial-gradient(120% 90% at 50% 30%, var(--card) 0%, var(--paper-2) 75%);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.stage-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+.stage-canvas.grabbing { cursor: grabbing; }
+.note { position: absolute; font-size: 1.35rem; line-height: 1.1; pointer-events: none; }
+.note-a { top: 18px; left: 22px; transform: rotate(-6deg); }
+.note-b { bottom: 16px; right: 22px; color: var(--ink-soft); }
+.no-gl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--ink-soft); }
+
+@media (max-width: 860px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); }
+  .diorama { aspect-ratio: 1 / 1; }
+}
+
+/* ---------- sections ---------- */
+.section { padding-block: clamp(40px, 7vw, 88px); border-top: 1px solid var(--line); }
+.section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; margin-bottom: 28px; }
+.section-head h2 { font-size: var(--step-3); font-style: italic; font-weight: 400; color: var(--berry-deep); }
+.section-head p { color: var(--ink-soft); max-width: 46ch; }
+
+/* ---------- menu ---------- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr) minmax(0, 340px);
+  gap: 20px;
+  align-items: start;
+}
+.cats { display: grid; gap: 6px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 90px); }
+.cat {
+  text-align: left; border: 0; background: transparent; padding: 10px 14px; border-radius: 12px;
+  font-weight: 700; color: var(--ink-soft); cursor: pointer; display: flex; justify-content: space-between; gap: 8px;
+}
+.cat span { font-variant-numeric: tabular-nums; opacity: .7; }
+.cat:hover { background: var(--paper-2); color: var(--ink); }
+.cat[aria-pressed="true"] { background: var(--card); color: var(--berry-deep); box-shadow: inset 0 0 0 1.5px var(--line); }
+
+.counter {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
+}
+.turntable { position: relative; aspect-ratio: 4 / 3; max-width: 100%; background: radial-gradient(90% 80% at 50% 35%, var(--card) 0%, var(--paper) 100%); }
+.turntable .note-b { bottom: 12px; left: 0; right: 0; text-align: center; }
+.rail-wrap { border-top: 1px dashed var(--line); padding: 14px; }
+.rail { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 6px; scroll-snap-type: x proximity; }
+.thumb {
+  flex: 0 0 auto; width: 86px; display: grid; gap: 4px; justify-items: center;
+  border: 1.5px solid transparent; background: var(--paper); border-radius: 16px; padding: 6px 4px 8px;
+  cursor: pointer; scroll-snap-align: start; transition: transform .15s ease, border-color .15s ease;
+}
+.thumb img { width: 64px; height: 64px; display: block; }
+.thumb span { font-size: .7rem; font-weight: 700; line-height: 1.2; text-align: center; color: var(--ink-soft); }
+.thumb:hover { transform: translateY(-2px); }
+.thumb[aria-current="true"] { border-color: var(--berry); background: var(--card); }
+.thumb[aria-current="true"] span { color: var(--berry-deep); }
+.thumb-ph { width: 64px; height: 64px; border-radius: 50%; background: var(--paper-2); }
+
+.details { display: grid; gap: 14px; min-width: 0; padding: 8px 4px; }
+.d-name { font-size: var(--step-3); font-style: italic; color: var(--berry-deep); font-weight: 400; }
+.d-price { font-family: var(--f-display); font-size: var(--step-1); font-variant-numeric: tabular-nums; }
+.d-desc { color: var(--ink-soft); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.tags li { font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; color: var(--ink-soft); }
+.opts { border: 0; padding: 0; margin: 0; }
+.opts legend { padding: 0; margin-bottom: 8px; }
+.opt-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.opt span {
+  display: grid; gap: 0; padding: 8px 14px; border-radius: 14px; border: 1.5px solid var(--line);
+  background: var(--card); cursor: pointer; font-weight: 700; font-size: .9rem; line-height: 1.3;
+}
+.opt small { font-weight: 600; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.opt input:checked + span { border-color: var(--berry); color: var(--berry-deep); }
+.opt input:focus-visible + span { outline: 3px solid var(--berry); outline-offset: 2px; }
+
+.buy-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card); }
+.stepper button { width: 38px; height: 42px; border: 0; background: transparent; cursor: pointer; font-size: 1.2rem; font-weight: 700; border-radius: 999px; }
+.stepper output { min-width: 2ch; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+.fav {
+  width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--card);
+  display: grid; place-items: center; cursor: pointer; color: var(--ink-soft);
+}
+.fav svg { width: 20px; height: 20px; }
+.fav[aria-pressed="true"] { color: var(--berry); border-color: var(--berry); }
+.fav[aria-pressed="true"] svg path { fill: currentColor; }
+.d-note { font-size: .85rem; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: 12px; }
+
+@media (max-width: 1040px) {
+  .menu-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 320px); }
+  .cats { grid-column: 1 / -1; position: static; display: flex; flex-wrap: wrap; }
+  .cat { padding: 8px 14px; border-radius: 999px; }
+}
+@media (max-width: 760px) {
+  .menu-grid { grid-template-columns: minmax(0, 1fr); }
+  .turntable { aspect-ratio: 1 / 1; }
+}
+
+/* ---------- story ---------- */
+.story-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 64px); }
+.story-text { display: grid; gap: 16px; max-width: 60ch; font-size: 1.05rem; }
+.story-text p:first-child::first-letter { font-family: var(--f-display); font-style: italic; font-size: 3.4em; float: left; line-height: .8; margin: .08em .1em 0 0; color: var(--berry); }
+.day { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.day li { display: grid; grid-template-columns: 64px 18px minmax(0, 1fr); gap: 12px; align-items: start; }
+.day time { font-family: var(--f-display); font-variant-numeric: tabular-nums; font-size: 1.1rem; padding-top: 2px; }
+.day .dot { position: relative; height: 100%; }
+.day .dot::before { content: ""; position: absolute; left: 50%; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--berry); transform: translateX(-50%); box-shadow: 0 0 0 4px var(--paper); }
+.day .dot::after { content: ""; position: absolute; left: 50%; top: 18px; bottom: -9px; width: 1.5px; background: var(--line); transform: translateX(-50%); }
+.day li:last-child .dot::after { display: none; }
+.day div { padding-bottom: 18px; }
+.day strong { display: block; }
+.day p { color: var(--ink-soft); font-size: .95rem; }
+@media (max-width: 760px) { .story-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- visit ---------- */
+.visit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.visit-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: grid; gap: 10px; align-content: start; }
+.visit-card h3 { font-size: var(--step-1); }
+.hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.hours td { padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.hours td:last-child { text-align: right; font-weight: 700; }
+.hours tr.today td { color: var(--berry-deep); }
+.copy-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.copy-btn { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 4px 12px; font-size: .78rem; font-weight: 800; cursor: pointer; }
+@media (max-width: 860px) { .visit-grid { grid-template-columns: minmax(0, 1fr); } }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-block: 24px 32px; color: var(--ink-soft); font-size: .9rem; }
+footer .hand { font-size: 1.3rem; }
+
+/* ---------- bag drawer ---------- */
+.scrim { position: fixed; inset: 0; background: rgba(58, 41, 37, .28); z-index: 40; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
+  width: min(400px, 100%);
+  background: var(--card); border-left: 1px solid var(--line);
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 18px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-left: 20px;
+  box-shadow: -20px 0 60px -30px rgba(58, 41, 37, .5);
+  animation: slide .28s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes slide { from { transform: translateX(40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .drawer, .pill.bump { animation: none; } }
+.drawer-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
+.drawer-head h2 { font-style: italic; font-weight: 400; color: var(--berry-deep); font-size: var(--step-2); }
+.x { border: 0; background: var(--paper); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; }
+.lines { list-style: none; margin: 0; padding: 8px 0; overflow-y: auto; display: grid; align-content: start; }
+.line { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.line img { width: 52px; height: 52px; background: var(--paper); border-radius: 12px; }
+.line strong { display: block; font-size: .95rem; }
+.line small { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.line-right { display: grid; justify-items: end; gap: 2px; font-variant-numeric: tabular-nums; font-weight: 800; }
+.link-btn { border: 0; background: none; padding: 0; color: var(--ink-soft); font-size: .78rem; text-decoration: underline; cursor: pointer; font-weight: 600; }
+.empty { padding: 32px 0; color: var(--ink-soft); text-align: center; display: grid; gap: 6px; }
+.empty .hand { font-size: 1.6rem; }
+.drawer-foot { display: grid; gap: 12px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.total { display: flex; justify-content: space-between; font-family: var(--f-display); font-size: var(--step-1); font-variant-numeric: tabular-nums; }
+.drawer-foot .btn { width: 100%; }
+.drawer-msg { font-size: .88rem; color: var(--leaf); font-weight: 700; }
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 999px;
+  font-weight: 700; font-size: .9rem; z-index: 60; max-width: calc(100% - 32px); text-align: center;
+  box-shadow: 0 12px 30px -12px rgba(58, 41, 37, .6);
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home" aria-label="Butterbell Café, home">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="19" fill="var(--paper-2)"/>
+        <path d="M20 8c-5 0-8.5 3.8-8.5 8.8v5.6L8.6 27h22.8l-2.9-4.6v-5.6C28.5 11.8 25 8 20 8z" fill="var(--butter)" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="20" cy="30.2" r="2.6" fill="var(--berry)" stroke="var(--ink)" stroke-width="1.4"/>
+        <path d="M20 8V5.5" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span><span class="brand-name">Butterbell</span><span class="brand-sub">Café &amp; little bakes</span></span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#home">Home</a>
+      <a href="#menu">Menu</a>
+      <a href="#story">Story</a>
+      <a href="#visit">Visit</a>
+    </nav>
+    <div class="pills">
+      <button class="pill" id="favPill" type="button" aria-label="Favourites">
+        <svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.3C1.1 7.8 3.3 4.2 6.9 4.2c2.1 0 3.5 1.1 5.1 2.9 1.6-1.8 3-2.9 5.1-2.9 3.6 0 5.8 3.6 4.4 7-1.9 4.7-9.5 9.3-9.5 9.3z" fill="currentColor"/></svg>
+        <span id="favCount">0</span>
+      </button>
+      <button class="pill" id="bagPill" type="button" aria-label="Open your bag" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/><path d="M9 10V7a3 3 0 0 1 6 0v3" stroke-linecap="round"/></svg>
+        <span id="bagCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Coffee · small bakes · 14 seats</p>
+        <h1 class="hero-title">Butterbell<b>Slow mornings and warm bakes, with a seat by the window.</b></h1>
+        <p class="hero-lede">A tiny two-storey café on Lantern Lane. We bake in small batches from six and pull every shot by hand.</p>
+        <div class="cta-row">
+          <a class="btn btn-berry" href="#menu">See the menu</a>
+          <a class="btn" href="#visit">Find us</a>
+        </div>
+        <ul class="facts">
+          <li id="openFact">Open 7:00–17:00</li>
+          <li>Croissants out at 7:30 &amp; 11:00</li>
+          <li>Dogs welcome on the patio</li>
+        </ul>
+      </div>
+      <div class="diorama">
+        <canvas class="stage-canvas" id="cafeCanvas" aria-label="A 3D model of the Butterbell café building. Drag sideways or use the arrow keys to turn it."></canvas>
+        <p class="note hand note-a">that's us, the one<br>with the striped awning</p>
+        <p class="note hand note-b">drag to look around ↺</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="menu">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Baked this morning · poured with care</p>
+          <h2>Our menu</h2>
+        </div>
+        <p>Pick something from the tray, turn it around, and add it to your bag. We'll have it ready at the counter.</p>
+      </div>
+
+      <div class="menu-grid">
+        <div class="cats" id="cats" role="group" aria-label="Filter the menu"></div>
+
+        <div class="counter">
+          <div class="turntable">
+            <canvas class="stage-canvas" id="menuCanvas" aria-label="3D view of the selected menu item. Drag sideways or use the arrow keys to turn it."></canvas>
+            <p class="note hand note-b">drag to turn it around</p>
+          </div>
+          <div class="rail-wrap">
+            <div class="rail" id="rail" aria-label="Menu items"></div>
+          </div>
+        </div>
+
+        <div class="details" id="details" aria-live="polite">
+          <p class="eyebrow" id="dCat"></p>
+          <h3 class="d-name" id="dName"></h3>
+          <p class="d-price" id="dPrice"></p>
+          <p class="d-desc" id="dDesc"></p>
+          <ul class="tags" id="dTags"></ul>
+          <fieldset class="opts">
+            <legend class="eyebrow">Choose</legend>
+            <div class="opt-list" id="dOpts"></div>
+          </fieldset>
+          <div class="buy-row">
+            <div class="stepper">
+              <button type="button" id="qMinus" aria-label="One fewer">−</button>
+              <output id="qty" aria-live="polite">1</output>
+              <button type="button" id="qPlus" aria-label="One more">+</button>
+            </div>
+            <button type="button" class="btn btn-berry" id="addBtn">Add to bag</button>
+            <button type="button" class="fav" id="favBtn" aria-pressed="false" aria-label="Save to favourites">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.5-9.3C1.1 7.8 3.3 4.2 6.9 4.2c2.1 0 3.5 1.1 5.1 2.9 1.6-1.8 3-2.9 5.1-2.9 3.6 0 5.8 3.6 4.4 7-1.9 4.7-9.5 9.3-9.5 9.3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="d-note" id="dNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="story">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Since 2019 · Lantern Lane</p>
+          <h2>Our story</h2>
+        </div>
+      </div>
+      <div class="story-grid">
+        <div class="story-text">
+          <p>Butterbell lives in an old bell-maker's workshop. The ground floor is the café and the oven; upstairs there are six seats by the window and a shelf of books you can borrow.</p>
+          <p>Our sourdough starter is called Dot and she is older than the café. The beans come from a roaster two streets away and are roasted every Tuesday. Strawberries come from the Hale family farm from May to September, and the cake changes when they stop.</p>
+          <p class="hand" style="font-size:1.6rem">Come in, ring the little bell, stay a while.</p>
+        </div>
+        <ol class="day" aria-label="A day at Butterbell">
+          <li><time>6:00</time><span class="dot" aria-hidden="true"></span><div><strong>Ovens on</strong><p>Dough out of the fridge, kettle on for the bakers.</p></div></li>
+          <li><time>7:00</time><span class="dot" aria-hidden="true"></span><div><strong>Doors open</strong><p>First espresso of the day goes to whoever is waiting.</p></div></li>
+          <li><time>7:30</time><span class="dot" aria-hidden="true"></span><div><strong>First croissants</strong><p>About 40 of them. They're gone by nine on Saturdays.</p></div></li>
+          <li><time>11:00</time><span class="dot" aria-hidden="true"></span><div><strong>Second bake</strong><p>Croissants, cardamom rolls and the day's cake.</p></div></li>
+          <li><time>15:00</time><span class="dot" aria-hidden="true"></span><div><strong>Cake o'clock</strong><p>The strawberry cream cake is sliced for the afternoon.</p></div></li>
+          <li><time>17:00</time><span class="dot" aria-hidden="true"></span><div><strong>Bell goes quiet</strong><p>Leftover bread goes to the shelter on Mill Street.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="visit">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Come and say hello</p>
+          <h2>Visit us</h2>
+        </div>
+      </div>
+      <div class="visit-grid">
+        <div class="visit-card">
+          <p class="eyebrow">Address</p>
+          <h3>12 Lantern Lane</h3>
+          <p>Riverside, next to the flower stall. Look for the striped awning and the bell above the door.</p>
+          <div class="copy-row">
+            <span id="addr">12 Lantern Lane, Riverside</span>
+            <button type="button" class="copy-btn" id="copyAddr">Copy address</button>
+          </div>
+        </div>
+        <div class="visit-card">
+          <p class="eyebrow">Opening hours</p>
+          <table class="hours" id="hours">
+            <tbody>
+              <tr data-days="1,2,3,4,5"><td>Monday – Friday</td><td>7:00 – 17:00</td></tr>
+              <tr data-days="6"><td>Saturday</td><td>8:00 – 18:00</td></tr>
+              <tr data-days="0"><td>Sunday</td><td>8:00 – 15:00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="visit-card">
+          <p class="eyebrow">Good to know</p>
+          <h3>14 seats, no laptops after noon</h3>
+          <p>Oat and almond milk at no extra charge. Water bowls on the patio. We take cards and cash.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="hand">Coffee, berries and a little butter.</span>
+    <span>Butterbell Café · a concept site built with Three.js</span>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Your bag" role="dialog" aria-modal="true">
+  <div class="drawer-head">
+    <h2>Your bag</h2>
+    <button type="button" class="x" id="closeBag" aria-label="Close bag">✕</button>
+  </div>
+  <ul class="lines" id="lines"></ul>
+  <div class="drawer-foot">
+    <div class="total"><span>Total</span><span id="total">$0.00</span></div>
+    <button type="button" class="btn btn-berry" id="reserveBtn">Reserve for pickup</button>
+    <p class="drawer-msg" id="drawerMsg" hidden></p>
+  </div>
+</aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const money = (n) => "$" + n.toFixed(2);
+
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } },
+    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ } }
+  };
+
+  /* ================= menu data ================= */
+  const ITEMS = [
+    { id: "cake", cat: "Sweets", name: "Strawberry Cream Slice",
+      desc: "Three layers of vanilla chiffon with whipped cream and jam from this week's berries, topped with two of the reddest.",
+      tags: ["Baked this morning", "Fresh cream", "Seasonal berries"],
+      opts: [["Slice", 6.5], ["Two slices", 12], ["Whole cake (8)", 42]],
+      note: "Contains wheat, egg, dairy. Whole cakes need a day's notice." },
+    { id: "latte", cat: "Coffee & Tea", name: "Honey Oat Latte",
+      desc: "A double shot of our house blend with steamed oat milk and a spoon of wildflower honey. The heart on top is free.",
+      tags: ["House blend", "Oat milk", "Local honey"],
+      opts: [["Small 8oz", 4.2], ["Regular 12oz", 4.8], ["Large 16oz", 5.4]],
+      note: "Contains oats. Swap to whole or almond milk at the counter." },
+    { id: "croissant", cat: "Bakes", name: "Butter Croissant",
+      desc: "Laminated over two days with cultured butter. Twenty-seven layers that shatter on the first bite.",
+      tags: ["Two-day dough", "Cultured butter"],
+      opts: [["One", 3.6], ["Box of four", 13]],
+      note: "Contains wheat, dairy, egg. Out of the oven at 7:30 and 11:00." },
+    { id: "matcha", cat: "Coffee & Tea", name: "Iced Strawberry Matcha",
+      desc: "Ceremonial-grade matcha whisked over strawberry milk and ice. Stir it before the first sip.",
+      tags: ["Ceremonial matcha", "House berry syrup"],
+      opts: [["Regular", 5.6], ["Large", 6.4]],
+      note: "Contains dairy. Ask for oat milk to make it dairy-free." },
+    { id: "donut", cat: "Sweets", name: "Pink Glaze Donut",
+      desc: "A soft brioche ring, fried to order on weekends and dipped in raspberry glaze with sprinkles.",
+      tags: ["Brioche dough", "Raspberry glaze"],
+      opts: [["One", 3.2], ["Half dozen", 17]],
+      note: "Contains wheat, egg, dairy. Sprinkles may contain soy." },
+    { id: "cupcake", cat: "Sweets", name: "Berry Swirl Cupcake",
+      desc: "Brown butter sponge, a swirl of strawberry buttercream and one whole berry on top.",
+      tags: ["Brown butter", "Buttercream"],
+      opts: [["One", 4], ["Box of four", 15]],
+      note: "Contains wheat, egg, dairy." },
+    { id: "macarons", cat: "Sweets", name: "Macaron Trio",
+      desc: "Pistachio, rose and lavender honey, filled the night before so the shells go soft and chewy.",
+      tags: ["Almond shells", "Gluten-free"],
+      opts: [["Trio", 5.5], ["Box of six", 10.5]],
+      note: "Contains almonds, pistachio, egg, dairy." },
+    { id: "roll", cat: "Bakes", name: "Cardamom Roll",
+      desc: "Swedish-style knot of enriched dough, cardamom sugar and a thin vanilla glaze. Best still warm.",
+      tags: ["Fresh cardamom", "Vanilla glaze"],
+      opts: [["One", 4.4], ["Box of four", 16]],
+      note: "Contains wheat, egg, dairy." }
+  ];
+  const CATS = ["All", "Coffee & Tea", "Bakes", "Sweets"];
+  const byId = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
+
+  /* ================= three.js helpers ================= */
+  const matCache = {};
+  function mat(color, extra) {
+    const key = color + JSON.stringify(extra || {});
+    if (!matCache[key]) matCache[key] = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.72, metalness: 0 }, extra));
+    return matCache[key];
+  }
+  function mesh(geo, m, x = 0, y = 0, z = 0) {
+    const o = new THREE.Mesh(geo, typeof m === "string" ? mat(m) : m);
+    o.position.set(x, y, z);
+    o.castShadow = true;
+    o.receiveShadow = true;
+    return o;
+  }
+  const glow = (color) => mat(color, { emissive: color, emissiveIntensity: 0.55, roughness: 0.4 });
+
+  function addLights(scene, s) {
+    scene.add(new THREE.HemisphereLight(0xfff3e4, 0xd9b49c, 0.7));
+    const sun = new THREE.DirectionalLight(0xfff1de, 0.8);
+    sun.position.set(4, 8, 5);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    const c = sun.shadow.camera;
+    c.left = -s; c.right = s; c.top = s; c.bottom = -s; c.near = 0.5; c.far = 30;
+    sun.shadow.bias = -0.0008;
+    sun.shadow.radius = 4;
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xffd9e0, 0.25);
+    fill.position.set(-5, 3, -2);
+    scene.add(fill);
+  }
+
+  function createStage(canvas, opts) {
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(opts.fov, 1, 0.1, 100);
+    const base = new THREE.Vector3(...opts.pos);
+    const target = new THREE.Vector3(...opts.target);
+    addLights(scene, opts.shadow || 4);
+    const stage = { renderer, scene, camera, visible: true };
+    const resize = () => {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      const k = Math.max(1, (opts.fitAspect || 1.2) / camera.aspect);
+      camera.position.copy(target).add(base.clone().sub(target).multiplyScalar(k));
+      camera.lookAt(target);
+      camera.updateProjectionMatrix();
+    };
+    new ResizeObserver(resize).observe(canvas);
+    resize();
+    new IntersectionObserver(([e]) => { stage.visible = e.isIntersecting; }).observe(canvas);
+    return stage;
+  }
+
+  // Drag-to-turn with inertia; idle behaviour is either a slow spin or a gentle sway.
+  function turntable(canvas, obj, { spin = 0, sway = 0, base = 0 } = {}) {
+    const st = { rot: base, vel: 0, dragging: false, lastX: 0, idle: 9, t: 0 };
+    obj.rotation.y = base;
+    canvas.tabIndex = 0;
+    canvas.addEventListener("pointerdown", (e) => {
+      st.dragging = true; st.lastX = e.clientX; st.vel = 0;
+      canvas.setPointerCapture(e.pointerId);
+      canvas.classList.add("grabbing");
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (!st.dragging) return;
+      const dx = (e.clientX - st.lastX) * 0.011;
+      st.lastX = e.clientX; st.rot += dx; st.vel = dx;
+    });
+    const up = () => { st.dragging = false; st.idle = 0; canvas.classList.remove("grabbing"); };
+    canvas.addEventListener("pointerup", up);
+    canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { st.rot -= 0.35; st.idle = 0; e.preventDefault(); }
+      if (e.key === "ArrowRight") { st.rot += 0.35; st.idle = 0; e.preventDefault(); }
+    });
+    st.update = (dt) => {
+      st.t += dt;
+      if (!st.dragging) {
+        st.rot += st.vel; st.vel *= 0.92; st.idle += dt;
+        if (!REDUCED && st.idle > 2) {
+          if (spin) st.rot += spin * dt;
+          if (sway) { const goal = base + Math.sin(st.t * 0.25) * sway; st.rot += (goal - st.rot) * Math.min(1, dt * 0.6); }
+        }
+      }
+      obj.rotation.y += (st.rot - obj.rotation.y) * Math.min(1, dt * 10);
+    };
+    return st;
+  }
+
+  function normalize(g, size) {
+    const box = new THREE.Box3().setFromObject(g);
+    const s = new THREE.Vector3();
+    box.getSize(s);
+    g.scale.multiplyScalar(size / Math.max(s.x, s.y, s.z));
+    box.setFromObject(g);
+    const c = new THREE.Vector3();
+    box.getCenter(c);
+    g.position.x -= c.x; g.position.z -= c.z; g.position.y -= box.min.y;
+    return g;
+  }
+
+  /* ================= food builders ================= */
+  const C = { berry: "#d93a4a", leaf: "#5f8a5b", cream: "#fffaf2", sponge: "#efc485", jam: "#e2495b", butter: "#f2cf7e" };
+
+  function strawberry() {
+    const g = new THREE.Group();
+    const prof = (t) => 0.5 * Math.sin(Math.PI * Math.pow(t, 1.6));
+    const pts = [];
+    for (let i = 0; i <= 16; i++) { const t = i / 16; pts.push(new THREE.Vector2(Math.max(0.001, prof(t)), t * 1.15)); }
+    g.add(mesh(new THREE.LatheGeometry(pts, 24), mat(C.berry, { roughness: 0.42 })));
+    const seedGeo = new THREE.SphereGeometry(0.022, 6, 4);
+    for (let k = 0; k < 34; k++) {
+      const t = 0.12 + 0.72 * ((k * 0.618) % 1), a = k * 2.4, r = prof(t);
+      const s = new THREE.Mesh(seedGeo, mat(C.butter));
+      s.position.set(r * Math.cos(a), t * 1.15, r * Math.sin(a));
+      g.add(s);
+    }
+    g.add(mesh(new THREE.ConeGeometry(0.28, 0.08, 7), mat(C.leaf, { flatShading: true }), 0, 1.13, 0));
+    for (let j = 0; j < 5; j++) {
+      const p = new THREE.Group();
+      p.rotation.y = (j / 5) * Math.PI * 2;
+      p.position.y = 1.12;
+      const leaf = mesh(new THREE.ConeGeometry(0.08, 0.34, 4), mat(C.leaf, { flatShading: true }), 0.16, 0, 0);
+      leaf.rotation.z = -Math.PI / 2 - 0.35;
+      leaf.scale.z = 0.4;
+      p.add(leaf);
+      g.add(p);
+    }
+    g.add(mesh(new THREE.CylinderGeometry(0.022, 0.03, 0.2, 6), C.leaf, 0, 1.24, 0));
+    return g;
+  }
+
+  function buildCake() {
+    const g = new THREE.Group();
+    const R = 1.6, a = 0.78;
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    shape.absarc(0, 0, R, -a / 2, a / 2, false);
+    shape.lineTo(0, 0);
+    const layers = [[C.sponge, 0.34], [C.cream, 0.07], [C.jam, 0.05], [C.sponge, 0.34], [C.cream, 0.07], [C.jam, 0.05], [C.sponge, 0.3], ["#fffdf8", 0.15]];
+    let y = 0;
+    for (const [color, h] of layers) {
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false, curveSegments: 24 });
+      geo.rotateX(-Math.PI / 2);
+      const m = mesh(geo, mat(color, { roughness: color === C.jam ? 0.35 : 0.8 }));
+      m.position.y = y;
+      g.add(m);
+      y += h;
+    }
+    const dollop = new THREE.SphereGeometry(0.13, 16, 10);
+    for (let i = 0; i < 5; i++) {
+      const ang = -a / 2 + 0.08 + (i / 4) * (a - 0.16);
+      const d = mesh(dollop, C.cream, Math.cos(ang) * (R - 0.16), y + 0.05, -Math.sin(ang) * (R - 0.16));
+      d.scale.y = 0.8;
+      g.add(d);
+    }
+    const s1 = strawberry(); s1.scale.setScalar(0.34); s1.position.set(0.75, y, 0.02); s1.rotation.set(0.15, 0.4, -0.1); g.add(s1);
+    const s2 = strawberry(); s2.scale.setScalar(0.3); s2.position.set(1.12, y + 0.05, -0.1); s2.rotation.set(-0.2, 1.2, 0.25); g.add(s2);
+    const s3 = strawberry(); s3.scale.setScalar(0.3); s3.position.set(0.55, 0.18, 0.62); s3.rotation.set(0, 0.3, 1.45); g.add(s3);
+    const mint = mesh(new THREE.SphereGeometry(0.08, 10, 6), C.leaf, 0.95, y + 0.08, 0.12);
+    mint.scale.set(1.4, 0.3, 0.7);
+    g.add(mint);
+    g.rotation.y = 0.5;
+    return g;
+  }
+
+  function steamPuffs(parent, x, y, z, count, spread) {
+    const puffs = [];
+    for (let i = 0; i < count; i++) {
+      const m = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), new THREE.MeshStandardMaterial({ color: "#ffffff", transparent: true, opacity: 0.4, depthWrite: false }));
+      parent.add(m);
+      puffs.push(m);
+    }
+    const update = (t) => {
+      puffs.forEach((p, i) => {
+        const ph = (t * 0.28 + i / count) % 1;
+        p.position.set(x + Math.sin(t * 1.3 + i * 2) * spread * 0.4 + ph * spread, y + ph * 1.1, z + Math.cos(t + i) * spread * 0.3);
+        p.scale.setScalar(0.05 + ph * 0.16);
+        p.material.opacity = Math.sin(ph * Math.PI) * 0.45;
+      });
+    };
+    update(0);
+    return update;
+  }
+
+  function buildLatte() {
+    const g = new THREE.Group();
+    const p = [[0, 0.02], [0.36, 0], [0.42, 0.04], [0.5, 0.35], [0.58, 0.78], [0.6, 0.86], [0.57, 0.88], [0.54, 0.78], [0.46, 0.35], [0.38, 0.08], [0, 0.08]];
+    const cupMat = mat("#fff7ef", { side: THREE.DoubleSide, roughness: 0.35 });
+    g.add(mesh(new THREE.LatheGeometry(p.map(([x, y]) => new THREE.Vector2(x, y)), 48), cupMat));
+    const rim = mesh(new THREE.TorusGeometry(0.585, 0.02, 8, 48), "#d4475d", 0, 0.865, 0); rim.rotation.x = Math.PI / 2; g.add(rim);
+    const band = mesh(new THREE.TorusGeometry(0.522, 0.016, 8, 48), "#d4475d", 0, 0.45, 0); band.rotation.x = Math.PI / 2; g.add(band);
+    const coffee = mesh(new THREE.CircleGeometry(0.545, 40), mat("#b9824f", { roughness: 0.3 }), 0, 0.8, 0);
+    coffee.rotation.x = -Math.PI / 2;
+    g.add(coffee);
+    const hs = new THREE.Shape();
+    hs.moveTo(5, 5); hs.bezierCurveTo(5, 5, 4, 0, 0, 0); hs.bezierCurveTo(-6, 0, -6, 7, -6, 7);
+    hs.bezierCurveTo(-6, 11, -3, 15.4, 5, 19); hs.bezierCurveTo(12, 15.4, 16, 11, 16, 7);
+    hs.bezierCurveTo(16, 7, 16, 0, 10, 0); hs.bezierCurveTo(7, 0, 5, 5, 5, 5);
+    const hg = new THREE.ShapeGeometry(hs, 16); hg.center();
+    const heart = new THREE.Mesh(hg, mat("#fff3e3", { roughness: 0.4 }));
+    heart.scale.setScalar(0.021); heart.rotation.x = -Math.PI / 2; heart.position.y = 0.803;
+    g.add(heart);
+    const handle = mesh(new THREE.TorusGeometry(0.17, 0.045, 10, 24, Math.PI), cupMat, 0.52, 0.5, 0);
+    handle.rotation.z = -Math.PI / 2;
+    g.add(handle);
+    g.add(mesh(new THREE.CylinderGeometry(0.85, 0.62, 0.07, 48), mat("#fff7ef", { roughness: 0.35 }), 0, -0.035, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.04, 20), "#c98b55", 0.62, 0.02, 0.32));
+    g.userData.steam = [0, 0.9, 0, 4, 0.25];
+    return g;
+  }
+
+  function buildCroissant() {
+    const g = new THREE.Group();
+    const n = 7, R = 0.75;
+    for (let i = 0; i < n; i++) {
+      const u = i / (n - 1), ang = -1.15 + 2.3 * u;
+      const size = 0.16 + 0.27 * Math.sin(Math.PI * u);
+      const m = mesh(new THREE.SphereGeometry(1, 14, 10), mat(i % 2 ? "#c9813a" : "#dca052", { flatShading: true, roughness: 0.6 }));
+      m.position.set(Math.sin(ang) * R, size * 0.8, Math.cos(ang) * R - R * 0.6);
+      m.scale.set(size * 1.15, size * 0.85, size * 0.95);
+      m.rotation.y = ang;
+      g.add(m);
+    }
+    return g;
+  }
+
+  function buildMatcha() {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.CylinderGeometry(0.64, 0.64, 0.04, 40), "#c9996b", 0, 0.02, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.43, 0.4, 0.6, 32), "#f6b4bf", 0, 0.36, 0));
+    g.add(mesh(new THREE.CylinderGeometry(0.465, 0.432, 0.62, 32), mat("#8fb565", { roughness: 0.5 }), 0, 0.97, 0));
+    const iceMat = new THREE.MeshStandardMaterial({ color: "#eef7ff", transparent: true, opacity: 0.6, roughness: 0.1 });
+    [[-0.15, 1.3, 0.1, 0.4], [0.17, 1.33, -0.08, 1.1], [0.02, 1.36, 0.2, 2.2]].forEach(([x, y, z, r]) => {
+      const c = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.24, 0.24), iceMat);
+      c.position.set(x, y, z); c.rotation.set(r, r * 0.7, r * 0.3);
+      g.add(c);
+    });
+    const straw = mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.9, 12), "#d4475d", 0.14, 1.25, 0.04);
+    straw.rotation.z = 0.2;
+    g.add(straw);
+    const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.42, 1.5, 40, 1, true),
+      new THREE.MeshStandardMaterial({ color: "#ffffff", transparent: true, opacity: 0.22, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false }));
+    glass.position.y = 0.79;
+    glass.renderOrder = 2;
+    g.add(glass);
+    return g;
+  }
+
+  function buildDonut() {
+    const g = new THREE.Group();
+    const dough = mesh(new THREE.TorusGeometry(0.5, 0.25, 20, 44), "#e0a96d", 0, 0.25, 0);
+    dough.rotation.x = -Math.PI / 2;
+    g.add(dough);
+    const icing = mesh(new THREE.TorusGeometry(0.5, 0.255, 20, 44), mat("#f39bb0", { roughness: 0.3 }), 0, 0.31, 0);
+    icing.rotation.x = -Math.PI / 2;
+    icing.scale.set(1.02, 1.02, 0.75);
+    g.add(icing);
+    const cols = ["#fffaf2", "#f2cf7e", "#7fb3d5", "#5f8a5b", "#a9344a"];
+    const sg = new THREE.CylinderGeometry(0.018, 0.018, 0.09, 6);
+    for (let i = 0; i < 46; i++) {
+      const th = i * 2.399, ph = Math.PI * (0.3 + 0.4 * ((i * 0.37) % 1));
+      const rr = 0.5 + 0.255 * Math.cos(ph);
+      const s = new THREE.Mesh(sg, mat(cols[i % cols.length]));
+      s.position.set(rr * Math.cos(th) * 1.02, 0.31 + 0.255 * 0.75 * Math.sin(ph) + 0.01, rr * Math.sin(th) * 1.02);
+      s.rotation.set(Math.PI / 2, 0, th * 3);
+      g.add(s);
+    }
+    return g;
+  }
+
+  function buildCupcake() {
+    const g = new THREE.Group();
+    g.add(mesh(new THREE.CylinderGeometry(0.5, 0.38, 0.6, 18, 1), mat("#e9798a", { flatShading: true }), 0, 0.3, 0));
+    const dome = mesh(new THREE.SphereGeometry(0.5, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), "#c98b55", 0, 0.6, 0);
+    dome.scale.y = 0.45;
+    g.add(dome);
+    for (let k = 0; k < 4; k++) {
+      const ring = mesh(new THREE.TorusGeometry(0.4 - 0.09 * k, 0.13 - 0.015 * k, 12, 32), mat(k % 2 ? "#ffe3e8" : "#ffd0da", { roughness: 0.5 }), 0, 0.78 + 0.14 * k, 0);
+      ring.rotation.x = Math.PI / 2;
+      g.add(ring);
+    }
+    const s = strawberry(); s.scale.setScalar(0.32); s.position.set(0.02, 1.2, 0); s.rotation.z = 0.25; g.add(s);
+    return g;
+  }
+
+  function buildMacarons() {
+    const g = new THREE.Group();
+    const shell = new THREE.SphereGeometry(0.45, 28, 14);
+    const mac = (color, cream) => {
+      const m = new THREE.Group();
+      const top = mesh(shell, mat(color, { roughness: 0.6 }), 0, 0.12, 0); top.scale.y = 0.32;
+      const bot = mesh(shell, mat(color, { roughness: 0.6 }), 0, -0.12, 0); bot.scale.y = 0.32;
+      m.add(top, bot, mesh(new THREE.CylinderGeometry(0.41, 0.41, 0.12, 32), cream));
+      return m;
+    };
+    const a = mac("#b9d48f", "#fff6e6"); a.position.y = 0.26; g.add(a);
+    const b = mac("#f2a7b8", "#fffaf2"); b.position.set(0.05, 0.8, 0.02); b.rotation.y = 0.6; g.add(b);
+    const c = mac("#c6b3e6", "#fff3d9"); c.position.set(-0.02, 1.32, 0); c.rotation.set(0.08, 1.2, -0.06); g.add(c);
+    return g;
+  }
+
+  function buildRoll() {
+    const g = new THREE.Group();
+    const pts = [];
+    for (let a = 0; a <= 9; a += 0.25) { const r = 0.06 + 0.065 * a; pts.push(new THREE.Vector3(r * Math.cos(a), 0, r * Math.sin(a))); }
+    const coil = mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 240, 0.14, 12, false), mat("#d39a5c", { roughness: 0.65 }), 0, 0.31, 0);
+    coil.scale.y = 2.2;
+    g.add(coil);
+    g.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.58, 16), "#d39a5c", 0, 0.31, 0));
+    const zig = [];
+    for (let i = 0; i < 9; i++) { const x = -0.58 + 0.145 * i; zig.push(new THREE.Vector3(x, 0.63, (i % 2 ? 1 : -1) * 0.5 * Math.sqrt(Math.max(0, 1 - x * x / 0.42)))); }
+    g.add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(zig), 120, 0.03, 6, false), mat("#fffaf2", { roughness: 0.3 })));
+    const pearl = new THREE.SphereGeometry(0.035, 8, 6);
+    for (let i = 0; i < 14; i++) {
+      const a = i * 2.2, r = 0.15 + 0.035 * i;
+      const p = new THREE.Mesh(pearl, mat("#fffdf8"));
+      p.position.set(r * Math.cos(a), 0.64, r * Math.sin(a));
+      g.add(p);
+    }
+    return g;
+  }
+
+  const BUILDERS = { cake: buildCake, latte: buildLatte, croissant: buildCroissant, matcha: buildMatcha, donut: buildDonut, cupcake: buildCupcake, macarons: buildMacarons, roll: buildRoll };
+  const models = {};
+  function getModel(id) {
+    if (!models[id]) {
+      const inner = BUILDERS[id]();
+      const wrap = new THREE.Group();
+      wrap.add(inner);
+      normalize(inner, 1.75);
+      // steam is added after sizing so the puffs don't count toward the model's bounds
+      if (inner.userData.steam) wrap.userData.update = steamPuffs(inner, ...inner.userData.steam);
+      models[id] = wrap;
+    }
+    return models[id];
+  }
+
+  /* ================= café diorama ================= */
+  function textTexture(draw, w, h) {
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    const tex = new THREE.CanvasTexture(c);
+    const paint = () => { draw(c.getContext("2d"), w, h); tex.needsUpdate = true; };
+    paint();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(paint);
+    return tex;
+  }
+
+  function buildCafe(scene) {
+    const g = new THREE.Group();
+    const add = (o) => (g.add(o), o);
+    const box = (w, h, d, m, x, y, z) => add(mesh(new THREE.BoxGeometry(w, h, d), m, x, y, z));
+
+    add(mesh(new THREE.CylinderGeometry(4.3, 4.5, 0.35, 64), "#ead7c2", 0, -0.175, 0));
+    box(6.0, 0.06, 1.5, "#f4e6d6", 0, 0.03, 2.05);
+    for (let i = 0; i < 9; i++) box(0.04, 0.065, 1.5, "#e6d3bf", -2.6 + i * 0.65, 0.032, 2.05);
+    add(mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.08, 40), "#a9c487", -2.45, 0.04, -0.7));
+
+    // ground floor shopfront
+    box(2.72, 0.15, 2.32, "#d9c2ab", 0, 0.075, 0);
+    box(2.6, 1.5, 2.2, "#4f7d6c", 0, 0.82, 0);
+    box(1.52, 0.92, 0.06, "#2f4d43", -0.35, 0.86, 1.11);
+    box(1.38, 0.78, 0.06, glow("#ffd98a"), -0.35, 0.86, 1.125);
+    box(0.04, 0.78, 0.08, "#2f4d43", -0.35, 0.86, 1.14);
+    box(1.62, 0.06, 0.16, "#f4e4d1", -0.35, 0.38, 1.16);
+    // a cake stand in the window
+    add(mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.03, 20), "#fffaf5", -0.7, 0.62, 1.05));
+    add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.12, 20), "#f6b4bf", -0.7, 0.7, 1.05));
+    box(0.62, 1.12, 0.06, "#2f4d43", 0.85, 0.63, 1.11);
+    box(0.52, 1.02, 0.06, "#8a5638", 0.85, 0.6, 1.13);
+    box(0.3, 0.34, 0.03, glow("#ffd98a"), 0.85, 0.83, 1.165);
+    add(mesh(new THREE.SphereGeometry(0.03, 8, 6), "#f2cf7e", 1.03, 0.55, 1.18));
+    box(0.82, 0.08, 0.32, "#d9c2ab", 0.85, 0.04, 1.3);
+    box(0.06, 0.7, 1.0, glow("#ffd98a"), 1.3, 0.9, -0.25);
+
+    // striped awning with scalloped edge
+    for (let i = 0; i < 9; i++) {
+      const s = box(0.3, 0.04, 0.66, i % 2 ? "#fffaf2" : "#d4475d", -1.2 + i * 0.3, 1.45, 1.4);
+      s.rotation.x = 0.5;
+      const sc = add(mesh(new THREE.SphereGeometry(0.15, 14, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), i % 2 ? "#fffaf2" : "#d4475d", -1.2 + i * 0.3, 1.29, 1.69));
+      sc.scale.set(1, 0.6, 0.35);
+    }
+
+    box(2.66, 0.1, 2.26, "#d4475d", 0, 1.57, 0);
+
+    // upper floor
+    box(2.4, 2.3, 2.0, "#f4e4d1", 0, 2.77, 0);
+    const signTex = textTexture((x, w, h) => {
+      x.fillStyle = "#fffaf5"; x.fillRect(0, 0, w, h);
+      x.strokeStyle = "#a9344a"; x.lineWidth = 6; x.strokeRect(8, 8, w - 16, h - 16);
+      x.fillStyle = "#a9344a"; x.textAlign = "center"; x.textBaseline = "middle";
+      x.font = "italic 600 70px Fraunces, Georgia, serif";
+      x.fillText("Butterbell", w / 2, h / 2 + 4);
+    }, 512, 112);
+    const signMats = Array.from({ length: 6 }, () => mat("#fffaf5"));
+    signMats[4] = new THREE.MeshStandardMaterial({ map: signTex, roughness: 0.6 });
+    const sign = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.37, 0.08), signMats);
+    sign.position.set(0, 1.92, 1.03);
+    sign.castShadow = true;
+    g.add(sign);
+
+    [-0.6, 0.6].forEach((x) => {
+      box(0.66, 0.98, 0.06, "#6b4a3a", x, 2.85, 1.01);
+      box(0.52, 0.84, 0.06, glow("#ffe2a6"), x, 2.85, 1.025);
+      box(0.03, 0.84, 0.07, "#6b4a3a", x, 2.85, 1.04);
+      box(0.52, 0.03, 0.07, "#6b4a3a", x, 2.95, 1.04);
+      box(0.72, 0.14, 0.2, "#a9344a", x, 2.3, 1.1);
+      for (let k = 0; k < 5; k++) add(mesh(new THREE.IcosahedronGeometry(0.075, 0), mat(["#f39bb0", "#fffaf2", "#7fa36a", "#d4475d", "#f2cf7e"][k], { flatShading: true }), x - 0.26 + k * 0.13, 2.41, 1.12));
+    });
+    box(0.06, 0.98, 0.66, "#6b4a3a", 1.21, 2.85, -0.3);
+    box(0.06, 0.84, 0.52, glow("#ffe2a6"), 1.225, 2.85, -0.3);
+    [-0.5, 0.5].forEach((x) => box(0.6, 0.84, 0.06, glow("#ffe2a6"), x, 2.85, -1.02));
+    box(2.56, 0.12, 2.16, "#e9d2bb", 0, 3.96, 0);
+
+    const roof = add(mesh(new THREE.ConeGeometry(1.95, 1.2, 4, 1), mat("#c9505a", { flatShading: true }), 0, 4.62, 0));
+    roof.rotation.y = Math.PI / 4;
+    roof.scale.z = 0.86;
+    box(0.32, 0.75, 0.32, "#b5654f", 0.55, 4.7, -0.35);
+    box(0.4, 0.08, 0.4, "#8f4b3b", 0.55, 5.1, -0.35);
+    const bell = add(mesh(new THREE.ConeGeometry(0.16, 0.24, 16, 1, true), mat("#f2cf7e", { metalness: 0.4, roughness: 0.35, side: THREE.DoubleSide }), 0, 5.32, 0));
+    add(mesh(new THREE.SphereGeometry(0.05, 10, 8), "#f2cf7e", 0, 5.17, 0));
+    bell.userData.isBell = true;
+
+    // hanging blade sign with a cup
+    box(0.55, 0.04, 0.04, "#2f2a28", 1.47, 2.4, 0.85);
+    const cupTex = textTexture((x, w, h) => {
+      x.clearRect(0, 0, w, h);
+      x.fillStyle = "#fffaf5"; x.beginPath(); x.arc(w / 2, h / 2, w / 2 - 4, 0, Math.PI * 2); x.fill();
+      x.lineWidth = 12; x.strokeStyle = "#d4475d"; x.stroke();
+      x.fillStyle = "#a9344a";
+      x.beginPath(); x.moveTo(70, 110); x.lineTo(186, 110); x.lineTo(172, 190); x.quadraticCurveTo(128, 205, 84, 190); x.closePath(); x.fill();
+      x.lineWidth = 12; x.strokeStyle = "#a9344a"; x.beginPath(); x.arc(186, 140, 22, -Math.PI / 2, Math.PI / 2); x.stroke();
+      x.lineWidth = 8; x.lineCap = "round";
+      [100, 128, 156].forEach((sx) => { x.beginPath(); x.moveTo(sx, 92); x.bezierCurveTo(sx - 12, 76, sx + 12, 66, sx, 50); x.stroke(); });
+    }, 256, 256);
+    const blade = new THREE.Mesh(new THREE.CircleGeometry(0.3, 32), new THREE.MeshStandardMaterial({ map: cupTex, transparent: true, side: THREE.DoubleSide, roughness: 0.6 }));
+    blade.position.set(1.62, 2.08, 0.85);
+    g.add(blade);
+
+    // tree with little red fruit
+    add(mesh(new THREE.CylinderGeometry(0.1, 0.16, 1.4, 8), "#8a5a3c", -2.5, 0.7, -0.6));
+    [[0, 1.65, 0, 0.78, "#7fa36a"], [0.4, 2.15, 0.15, 0.56, "#93b878"], [-0.4, 2.0, -0.2, 0.52, "#6d955c"], [0.05, 2.55, -0.05, 0.42, "#a3c486"]].forEach(([x, y, z, r, c]) =>
+      add(mesh(new THREE.IcosahedronGeometry(r, 1), mat(c, { flatShading: true }), -2.5 + x, y, -0.6 + z)));
+    [[0.55, 1.7, 0.45], [-0.5, 1.85, 0.4], [0.2, 2.1, 0.62], [-0.15, 1.45, 0.7], [0.5, 2.35, -0.1]].forEach(([x, y, z]) =>
+      add(mesh(new THREE.SphereGeometry(0.07, 10, 8), "#d93a4a", -2.5 + x, y, -0.6 + z)));
+    add(mesh(new THREE.IcosahedronGeometry(0.36, 1), mat("#7fa36a", { flatShading: true }), -1.75, 0.3, 1.45));
+
+    // lamp post
+    add(mesh(new THREE.CylinderGeometry(0.04, 0.06, 1.9, 10), "#3f4f49", 2.3, 0.95, 2.3));
+    box(0.22, 0.26, 0.22, "#3f4f49", 2.3, 2.0, 2.3);
+    add(mesh(new THREE.SphereGeometry(0.09, 12, 10), glow("#ffd98a"), 2.3, 1.98, 2.3));
+    const lamp = new THREE.PointLight(0xffd28a, 0.5, 4);
+    lamp.position.set(2.3, 1.95, 2.3);
+    g.add(lamp);
+
+    // bench and the café cat
+    box(0.9, 0.06, 0.32, "#b07a4f", -1.5, 0.34, 2.3);
+    box(0.9, 0.24, 0.05, "#b07a4f", -1.5, 0.55, 2.15);
+    [-1.85, -1.15].forEach((x) => box(0.06, 0.32, 0.28, "#5b4034", x, 0.16, 2.3));
+    const cat = add(mesh(new THREE.SphereGeometry(0.12, 14, 10), "#e2a15c", -1.32, 0.45, 2.32));
+    cat.scale.set(1.45, 0.85, 1);
+    add(mesh(new THREE.SphereGeometry(0.085, 14, 10), "#e2a15c", -1.15, 0.53, 2.34));
+    [-0.04, 0.04].forEach((dz) => {
+      const ear = add(mesh(new THREE.ConeGeometry(0.03, 0.07, 4), "#e2a15c", -1.15, 0.62, 2.34 + dz));
+      ear.rotation.x = dz * 6;
+    });
+    const tail = add(mesh(new THREE.TorusGeometry(0.1, 0.022, 6, 16, Math.PI), "#e2a15c", -1.5, 0.45, 2.36));
+    tail.rotation.y = Math.PI / 2;
+
+    // patio table with umbrella
+    add(mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.55, 8), "#3f4f49", 2.35, 0.28, 0.2));
+    add(mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.04, 24), "#fffaf5", 2.35, 0.57, 0.2));
+    add(mesh(new THREE.CylinderGeometry(0.018, 0.018, 1.3, 6), "#3f4f49", 2.35, 1.2, 0.2));
+    for (let i = 0; i < 8; i++) {
+      const seg = add(mesh(new THREE.ConeGeometry(0.72, 0.3, 8, 1, true, (i / 8) * Math.PI * 2, Math.PI / 4), mat(i % 2 ? "#fffaf2" : "#d4475d", { side: THREE.DoubleSide, flatShading: true }), 2.35, 1.72, 0.2));
+      seg.castShadow = true;
+    }
+    [[2.0, 0.55], [2.7, -0.15]].forEach(([x, z]) => {
+      add(mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16), "#b07a4f", x, 0.36, z));
+      add(mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.34, 6), "#3f4f49", x, 0.17, z));
+    });
+    add(mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.12, 14), "#fff7ef", 2.28, 0.65, 0.12));
+
+    // planters by the door
+    [0.42, 1.28].forEach((x) => {
+      add(mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.24, 12), "#c97b5a", x, 0.12, 1.36));
+      add(mesh(new THREE.IcosahedronGeometry(0.17, 1), mat("#6d955c", { flatShading: true }), x, 0.36, 1.36));
+    });
+
+    scene.add(g);
+
+    // drifting blossom petals
+    const petals = [];
+    const petalGeo = new THREE.PlaneGeometry(0.09, 0.06);
+    for (let i = 0; i < 34; i++) {
+      const p = new THREE.Mesh(petalGeo, mat(i % 3 ? "#f6b4bf" : "#fffaf2", { side: THREE.DoubleSide }));
+      p.userData = { x: (Math.random() - 0.5) * 7, z: (Math.random() - 0.5) * 6, y: Math.random() * 6, sp: 0.25 + Math.random() * 0.3, ph: Math.random() * 6 };
+      scene.add(p);
+      petals.push(p);
+    }
+    const smoke = steamPuffs(g, 0.55, 5.2, -0.35, 5, 0.6);
+
+    return {
+      group: g,
+      update(t, dt) {
+        smoke(t);
+        bell.rotation.z = Math.sin(t * 2.2) * 0.12;
+        if (REDUCED) return;
+        petals.forEach((p) => {
+          const d = p.userData;
+          d.y -= d.sp * dt;
+          if (d.y < 0.05) { d.y = 5.5 + Math.random(); d.x = (Math.random() - 0.5) * 7; }
+          p.position.set(d.x + Math.sin(t * 0.8 + d.ph) * 0.35, d.y, d.z + Math.cos(t * 0.6 + d.ph) * 0.25);
+          p.rotation.set(t * 1.3 + d.ph, t * 0.9, d.ph);
+        });
+      }
+    };
+  }
+
+  /* ================= state + UI ================= */
+  let selected = "cake", optIndex = 0, qty = 1, filter = "All";
+  let bag = store.get("butterbell-bag", []).filter((l) => byId[l.id] && byId[l.id].opts[l.opt]);
+  let favs = new Set(store.get("butterbell-favs", []).filter((id) => byId[id]));
+  const thumbs = {};
+
+  function renderCats() {
+    $("#cats").innerHTML = CATS.map((c) => {
+      const n = c === "All" ? ITEMS.length : ITEMS.filter((i) => i.cat === c).length;
+      return `<button type="button" class="cat" id="cat-${c.replace(/\W+/g, "")}" data-cat="${c}" aria-pressed="${c === filter}">${c}<span>${n}</span></button>`;
+    }).join("");
+  }
+  function renderRail() {
+    $("#rail").innerHTML = ITEMS.filter((i) => filter === "All" || i.cat === filter).map((i) =>
+      `<button type="button" class="thumb" id="thumb-${i.id}" data-id="${i.id}" aria-current="${i.id === selected}">
+        ${thumbs[i.id] ? `<img src="${thumbs[i.id]}" alt="">` : `<span class="thumb-ph" aria-hidden="true"></span>`}
+        <span>${i.name}</span></button>`).join("");
+  }
+  function renderDetails() {
+    const it = byId[selected];
+    $("#dCat").textContent = it.cat;
+    $("#dName").textContent = it.name;
+    $("#dPrice").textContent = money(it.opts[optIndex][1]);
+    $("#dDesc").textContent = it.desc;
+    $("#dTags").innerHTML = it.tags.map((t) => `<li>${t}</li>`).join("");
+    $("#dOpts").innerHTML = it.opts.map(([label, price], i) =>
+      `<label class="opt"><input type="radio" name="opt" id="opt-${i}" value="${i}" ${i === optIndex ? "checked" : ""}><span>${label}<small>${money(price)}</small></span></label>`).join("");
+    $("#dNote").textContent = it.note;
+    $("#qty").textContent = qty;
+    const fav = favs.has(selected);
+    $("#favBtn").setAttribute("aria-pressed", fav);
+    $("#favBtn").setAttribute("aria-label", fav ? "Remove from favourites" : "Save to favourites");
+  }
+  function renderCounts() {
+    $("#bagCount").textContent = bag.reduce((s, l) => s + l.qty, 0);
+    $("#favCount").textContent = favs.size;
+  }
+  function renderBag() {
+    const lines = $("#lines");
+    if (!bag.length) {
+      lines.innerHTML = `<li class="empty"><span class="hand">Your bag is empty</span><span>Pick something from the menu and it will show up here.</span></li>`;
+    } else {
+      lines.innerHTML = bag.map((l, i) => {
+        const it = byId[l.id], [label, price] = it.opts[l.opt];
+        return `<li class="line">
+          ${thumbs[l.id] ? `<img src="${thumbs[l.id]}" alt="">` : `<span class="thumb-ph" aria-hidden="true"></span>`}
+          <div><strong>${it.name}</strong><small>${l.qty} × ${label} · ${money(price)}</small></div>
+          <div class="line-right">${money(price * l.qty)}<button type="button" class="link-btn" data-remove="${i}">Remove</button></div></li>`;
+      }).join("");
+    }
+    $("#total").textContent = money(bag.reduce((s, l) => s + byId[l.id].opts[l.opt][1] * l.qty, 0));
+    $("#reserveBtn").disabled = !bag.length;
+  }
+  function bump(el) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+  let toastTimer;
+  function toast(msg) {
+    const t = $("#toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+  }
+
+  let showModel = () => {};
+  function select(id) {
+    if (id === selected && models[id]) return;
+    selected = id; optIndex = 0; qty = 1;
+    renderDetails();
+    document.querySelectorAll(".thumb").forEach((b) => b.setAttribute("aria-current", b.dataset.id === id));
+    showModel(id);
+  }
+
+  $("#cats").addEventListener("click", (e) => {
+    const b = e.target.closest(".cat"); if (!b) return;
+    filter = b.dataset.cat;
+    renderCats(); renderRail();
+    const visible = ITEMS.filter((i) => filter === "All" || i.cat === filter);
+    if (!visible.some((i) => i.id === selected)) select(visible[0].id);
+  });
+  $("#rail").addEventListener("click", (e) => { const b = e.target.closest(".thumb"); if (b) select(b.dataset.id); });
+  $("#dOpts").addEventListener("change", (e) => { optIndex = +e.target.value; $("#dPrice").textContent = money(byId[selected].opts[optIndex][1]); });
+  $("#qMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); $("#qty").textContent = qty; });
+  $("#qPlus").addEventListener("click", () => { qty = Math.min(20, qty + 1); $("#qty").textContent = qty; });
+  $("#addBtn").addEventListener("click", () => {
+    const line = bag.find((l) => l.id === selected && l.opt === optIndex);
+    if (line) line.qty += qty; else bag.push({ id: selected, opt: optIndex, qty });
+    store.set("butterbell-bag", bag);
+    renderCounts(); renderBag(); bump($("#bagPill"));
+    toast(`Added ${qty} × ${byId[selected].name} to your bag`);
+    $("#drawerMsg").hidden = true;
+    qty = 1; $("#qty").textContent = qty;
+  });
+  $("#favBtn").addEventListener("click", () => {
+    if (favs.has(selected)) favs.delete(selected); else favs.add(selected);
+    store.set("butterbell-favs", [...favs]);
+    renderDetails(); renderCounts(); bump($("#favPill"));
+  });
+  $("#favPill").addEventListener("click", () => {
+    if (!favs.size) { toast("Tap the heart on any item to save it here"); return; }
+    filter = "All"; renderCats(); renderRail();
+    select([...favs][0]);
+    $("#menu").scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" });
+  });
+
+  function openBag() { renderBag(); $("#drawer").hidden = false; $("#scrim").hidden = false; $("#closeBag").focus(); }
+  function closeBag() { $("#drawer").hidden = true; $("#scrim").hidden = true; $("#bagPill").focus(); }
+  $("#bagPill").addEventListener("click", openBag);
+  $("#closeBag").addEventListener("click", closeBag);
+  $("#scrim").addEventListener("click", closeBag);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#drawer").hidden) closeBag(); });
+  $("#lines").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-remove]"); if (!b) return;
+    bag.splice(+b.dataset.remove, 1);
+    store.set("butterbell-bag", bag);
+    renderBag(); renderCounts();
+  });
+  $("#reserveBtn").addEventListener("click", () => {
+    const m = $("#drawerMsg");
+    m.textContent = "This is a concept shop, so no order was sent. In a real launch this would hold your items for pickup.";
+    m.hidden = false;
+  });
+  $("#copyAddr").addEventListener("click", () => {
+    const text = $("#addr").textContent, btn = $("#copyAddr");
+    const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy address"; }, 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($("#addr")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected, press copy"; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  // highlight today's hours
+  (() => {
+    const d = new Date().getDay();
+    document.querySelectorAll("#hours tr").forEach((tr) => {
+      if (tr.dataset.days.split(",").includes(String(d))) {
+        tr.classList.add("today");
+        $("#openFact").textContent = "Open today " + tr.lastElementChild.textContent.replace(/\s/g, "");
+      }
+    });
+  })();
+
+  renderCats(); renderRail(); renderDetails(); renderCounts(); renderBag();
+
+  /* ================= boot 3D ================= */
+  function webglOK() {
+    try { const c = document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"))); } catch (e) { return false; }
+  }
+  if (typeof THREE === "undefined" || !webglOK()) {
+    ["#cafeCanvas", "#menuCanvas"].forEach((s) => {
+      const p = document.createElement("p");
+      p.className = "no-gl";
+      p.textContent = "The 3D view needs WebGL, which this browser has turned off. The menu still works.";
+      $(s).replaceWith(p);
+    });
+    return;
+  }
+
+  // thumbnails rendered from the real models
+  (() => {
+    const tr = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    tr.setSize(160, 160);
+    tr.shadowMap.enabled = true;
+    const sc = new THREE.Scene();
+    addLights(sc, 3);
+    const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    cam.position.set(0, 1.9, 4.3);
+    cam.lookAt(0, 0.85, 0);
+    ITEMS.forEach((it) => {
+      const m = getModel(it.id);
+      m.rotation.y = -0.5;
+      sc.add(m);
+      tr.render(sc, cam);
+      thumbs[it.id] = tr.domElement.toDataURL("image/png");
+      sc.remove(m);
+      m.rotation.y = 0;
+    });
+    tr.dispose();
+    if (tr.forceContextLoss) tr.forceContextLoss();
+    renderRail(); renderBag();
+  })();
+
+  const hero = createStage($("#cafeCanvas"), { fov: 34, pos: [7.9, 5.9, 10.5], target: [0, 1.75, 0], shadow: 6, fitAspect: 1.25 });
+  const cafe = buildCafe(hero.scene);
+  const heroSpin = turntable($("#cafeCanvas"), cafe.group, { sway: 0.4, base: -0.35 });
+
+  const menu = createStage($("#menuCanvas"), { fov: 30, pos: [0, 2.0, 5.0], target: [0, 0.8, 0], shadow: 3, fitAspect: 1.1 });
+  const pivot = new THREE.Group();
+  menu.scene.add(pivot);
+  pivot.add(mesh(new THREE.CylinderGeometry(1.3, 1.36, 0.12, 64), mat("#fffaf5", { roughness: 0.4 }), 0, -0.06, 0));
+  pivot.add(mesh(new THREE.CylinderGeometry(1.37, 1.37, 0.03, 64), "#d4475d", 0, -0.13, 0));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.ShadowMaterial({ opacity: 0.12 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.15;
+  floor.receiveShadow = true;
+  menu.scene.add(floor);
+  const menuSpin = turntable($("#menuCanvas"), pivot, { spin: 0.35, base: 0 });
+
+  let current = null, outgoing = null, inT = 1, outT = 1;
+  const easeOutBack = (x) => 1 + 2.4 * Math.pow(x - 1, 3) + 1.4 * Math.pow(x - 1, 2);
+  showModel = (id) => {
+    const m = getModel(id);
+    if (m === current) return;
+    if (outgoing) pivot.remove(outgoing);
+    outgoing = current; outT = 0;
+    current = m; inT = REDUCED ? 1 : 0;
+    m.scale.setScalar(REDUCED ? 1 : 0.001);
+    pivot.add(m);
+    if (REDUCED && outgoing) { pivot.remove(outgoing); outgoing = null; }
+  };
+  showModel(selected);
+
+  const clock = new THREE.Clock();
+  function frame() {
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+    if (hero.visible) {
+      heroSpin.update(dt);
+      cafe.update(t, dt);
+      hero.renderer.render(hero.scene, hero.camera);
+    }
+    if (menu.visible) {
+      menuSpin.update(dt);
+      if (outgoing) {
+        outT = Math.min(1, outT + dt * 6);
+        outgoing.scale.setScalar(Math.max(0.001, 1 - outT));
+        if (outT >= 1) { pivot.remove(outgoing); outgoing.scale.setScalar(1); outgoing = null; }
+      }
+      if (current && inT < 1) {
+        inT = Math.min(1, inT + dt * 2.6);
+        current.scale.setScalar(Math.max(0.001, easeOutBack(inT)));
+      }
+      if (current) {
+        current.position.y = REDUCED ? 0 : Math.sin(t * 1.6) * 0.03 + 0.03;
+        if (current.userData.update) current.userData.update(t);
+      }
+      menu.renderer.render(menu.scene, menu.camera);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
